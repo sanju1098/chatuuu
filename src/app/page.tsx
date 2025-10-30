@@ -1,14 +1,6 @@
 "use client";
 
 import {
-  Branch,
-  BranchMessages,
-  BranchNext,
-  BranchPage,
-  BranchPrevious,
-  BranchSelector,
-} from "@/components/ai-elements/branch";
-import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
@@ -277,7 +269,7 @@ const mockResponses = [
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
 
-const Example = () => {
+const ChatPage = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
@@ -561,4 +553,4 @@ const Example = () => {
   );
 };
 
-export default Example;
+export default ChatPage;
