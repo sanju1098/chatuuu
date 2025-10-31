@@ -45,9 +45,9 @@ const ChatPage = () => {
   const handleSuggestionClick = (suggestion: string) => {};
 
   return (
-    <div className="flex flex-col h-screen max-w-7xl mx-auto relative bg-background">
+    <div className="flex flex-col h-[73vh] max-w-7xl mx-auto relative bg-background">
       {/* Scrollable message area */}
-      <div className="flex-1 overflow-y-auto px-6 pt-6 pb-[200px]">
+      <div className="overflow-y-auto px-6 pt-3">
         <Conversation>
           <ConversationContent>
             {messages.map(
@@ -95,8 +95,8 @@ const ChatPage = () => {
       </div>
 
       {/* Fixed input footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50">
-        <div className="max-w-5xl mx-auto px-4 pt-3 pb-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-0">
+        <div className="max-w-5xl mx-auto px-4 py-3">
           {/* Suggestions above input */}
           <div className="flex flex-wrap justify-center items-center gap-2 mb-3">
             {suggestions.map((suggestion) => (
