@@ -51,19 +51,15 @@ import {
 } from "@/components/ai-elements/sources";
 import { GlobeIcon, MicIcon } from "lucide-react";
 
-const ChatPage = () => {
+const ChatUIPage = () => {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].id);
 
   const { messages, sendMessage, status } = useChat();
 
   const handleSubmit = (message: PromptInputMessage) => {
-    if (!message.text) {
-      return;
-    }
-    sendMessage({
-      text: message.text,
-    });
+    if (!message.text) return;
+    sendMessage({ text: message.text });
     setInput("");
   };
 
@@ -71,12 +67,12 @@ const ChatPage = () => {
     setInput(suggestion);
   };
 
-  const messageReasoning: { duration: number; content: string } = {
+  const messageReasoning = {
     duration: 2.0,
     content:
       "Static reasoning: I referenced docs and prior examples to craft this response.",
   };
-  const messageSource: { sources: { href: string; title: string }[] } = {
+  const messageSource = {
     sources: [
       {
         href: "https://react.dev/reference/react",
@@ -91,7 +87,8 @@ const ChatPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex-1 overflow-y-auto px-6 h-[70vh] bg-background w-7xl mx-auto pt-3">
+      {/* Scrollable Chat Area */}
+      <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 bg-background max-w-7xl w-full mx-auto pt-3 h-[70vh] sm:h-[75vh] md:h-[78vh]">
         <Conversation>
           <ConversationContent>
             {messages.map(
@@ -101,76 +98,70 @@ const ChatPage = () => {
                 role: string;
               }) => (
                 <div key={message.id}>
-                  {message.parts.map(
-                    (
-                      part: { type: any; text: string | null | undefined },
-                      i: any
-                    ) => {
-                      switch (part.type) {
-                        case "text":
-                          return (
-                            <Fragment key={`${message.id}-${i}`}>
-                              <Message
-                                from={
-                                  message.role as
-                                    | "system"
-                                    | "user"
-                                    | "assistant"
-                                }
-                              >
-                                <MessageContent>
-                                  {message.role !== "user" && (
-                                    <Reasoning
-                                      duration={messageReasoning.duration}
-                                    >
-                                      <ReasoningTrigger />
-                                      <ReasoningContent>
-                                        {messageReasoning.content}
-                                      </ReasoningContent>
-                                    </Reasoning>
-                                  )}
-
-                                  <Response>{part.text}</Response>
-                                  {message.role !== "user" && (
-                                    <Sources>
-                                      <SourcesTrigger
-                                        count={messageSource.sources.length}
-                                      />
-                                      <SourcesContent>
-                                        {messageSource.sources.map((source) => (
-                                          <Source
-                                            href={source.href}
-                                            key={source.href}
-                                            title={source.title}
-                                          />
-                                        ))}
-                                      </SourcesContent>
-                                    </Sources>
-                                  )}
-                                </MessageContent>
-                                {message.role === "user" ? (
-                                  <div className="mr-2 shrink-0 self-end">
-                                    <MessageAvatar
-                                      name="ME"
-                                      src="https://github.com/haydenbleasel.png"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="mr-2 shrink-0 self-start">
-                                    <MessageAvatar
-                                      name="AI"
-                                      src="https://github.com/openai.png"
-                                    />
-                                  </div>
+                  {message.parts.map((part, i) => {
+                    switch (part.type) {
+                      case "text":
+                        return (
+                          <Fragment key={`${message.id}-${i}`}>
+                            <Message
+                              from={
+                                message.role as "system" | "user" | "assistant"
+                              }
+                            >
+                              <MessageContent>
+                                {message.role !== "user" && (
+                                  <Reasoning
+                                    duration={messageReasoning.duration}
+                                  >
+                                    <ReasoningTrigger />
+                                    <ReasoningContent>
+                                      {messageReasoning.content}
+                                    </ReasoningContent>
+                                  </Reasoning>
                                 )}
-                              </Message>
-                            </Fragment>
-                          );
-                        default:
-                          return null;
-                      }
+
+                                <Response>{part.text}</Response>
+
+                                {message.role !== "user" && (
+                                  <Sources>
+                                    <SourcesTrigger
+                                      count={messageSource.sources.length}
+                                    />
+                                    <SourcesContent>
+                                      {messageSource.sources.map((source) => (
+                                        <Source
+                                          href={source.href}
+                                          key={source.href}
+                                          title={source.title}
+                                        />
+                                      ))}
+                                    </SourcesContent>
+                                  </Sources>
+                                )}
+                              </MessageContent>
+
+                              {message.role === "user" ? (
+                                <div className="hidden sm:block mr-2 shrink-0 self-end">
+                                  <MessageAvatar
+                                    name="ME"
+                                    src="https://github.com/haydenbleasel.png"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="hidden sm:block mr-2 shrink-0 self-start">
+                                  <MessageAvatar
+                                    name="AI"
+                                    src="https://github.com/openai.png"
+                                  />
+                                </div>
+                              )}
+                            </Message>
+                          </Fragment>
+                        );
+                      default:
+                        return null;
                     }
-                  )}
+                  })}
                 </div>
               )
             )}
@@ -182,14 +173,11 @@ const ChatPage = () => {
         </Conversation>
       </div>
 
-      {/* Fixed input footer */}
-      <div
-        className="border-t border-border bg-background"
-        // className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-0"
-      >
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          {/* Suggestions above input */}
-          <div className="flex flex-wrap justify-center items-center gap-2 mb-3">
+      {/* Input Footer */}
+      <div className="border-t border-border bg-background w-full">
+        <div className="max-w-5xl mx-auto px-2 sm:px-4 py-3">
+          {/* Suggestions */}
+          <div className="hidden lg:flex flex-wrap justify-center items-center gap-2 mb-3">
             {suggestions.map((suggestion) => (
               <Suggestion
                 key={suggestion}
@@ -199,7 +187,7 @@ const ChatPage = () => {
             ))}
           </div>
 
-          {/* Input area */}
+          {/* Prompt Input Area */}
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
             <PromptInputHeader>
               <PromptInputAttachments>
@@ -213,11 +201,13 @@ const ChatPage = () => {
               <PromptInputTextarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                // className="text-sm sm:text-base"
+                placeholder="Type your message..."
               />
             </PromptInputBody>
 
-            <PromptInputFooter>
-              <PromptInputTools>
+            <PromptInputFooter className="flex flex-wrap gap-2 sm:gap-3">
+              <PromptInputTools className="flex items-center gap-1 sm:gap-2">
                 <PromptInputActionMenu>
                   <PromptInputActionMenuTrigger />
                   <PromptInputActionMenuContent>
@@ -225,11 +215,11 @@ const ChatPage = () => {
                   </PromptInputActionMenuContent>
                 </PromptInputActionMenu>
 
-                <PromptInputButton variant={"ghost"}>
+                <PromptInputButton variant="ghost">
                   <MicIcon size={16} />
                 </PromptInputButton>
 
-                <PromptInputButton variant={"ghost"}>
+                <PromptInputButton variant="ghost">
                   <GlobeIcon size={16} />
                 </PromptInputButton>
 
@@ -259,4 +249,4 @@ const ChatPage = () => {
   );
 };
 
-export default ChatPage;
+export default ChatUIPage;

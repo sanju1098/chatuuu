@@ -9,6 +9,7 @@ export async function POST(req: Request) {
       model: google("gemini-2.5-flash"),
       messages: convertToModelMessages(messages),
     });
+    console.log(result.toUIMessageStreamResponse(), "Testing stream response");
 
     return result.toUIMessageStreamResponse();
   } catch (error) {
