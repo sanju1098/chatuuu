@@ -90,9 +90,8 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-[73vh] max-w-7xl mx-auto relative bg-background">
-      {/* Scrollable message area */}
-      <div className="overflow-y-auto px-6 pt-3">
+    <div className="flex flex-col h-screen">
+      <div className="flex-1 overflow-y-auto px-6 h-[70vh] bg-background max-w-7xl mx-auto pt-3">
         <Conversation>
           <ConversationContent>
             {messages.map(
@@ -182,7 +181,10 @@ const ChatPage = () => {
       </div>
 
       {/* Fixed input footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-0">
+      <div
+        className="border-t border-border bg-background"
+        // className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-0"
+      >
         <div className="max-w-5xl mx-auto px-4 py-3">
           {/* Suggestions above input */}
           <div className="flex flex-wrap justify-center items-center gap-2 mb-3">
