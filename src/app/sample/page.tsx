@@ -6,7 +6,11 @@ import {
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import { Loader } from "@/components/ai-elements/loader";
-import { Message, MessageContent } from "@/components/ai-elements/message";
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+} from "@/components/ai-elements/message";
 import { useChat } from "@ai-sdk/react";
 import {
   PromptInput,
@@ -42,7 +46,9 @@ const ChatPage = () => {
     setInput("");
   };
 
-  const handleSuggestionClick = (suggestion: string) => {};
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput(suggestion);
+  };
 
   return (
     <div className="flex flex-col h-[73vh] max-w-7xl mx-auto relative bg-background">
@@ -77,6 +83,21 @@ const ChatPage = () => {
                                 <MessageContent>
                                   <Response>{part.text}</Response>
                                 </MessageContent>
+                                {message.role === "user" ? (
+                                  <div className="mr-2 shrink-0 self-end">
+                                    <MessageAvatar
+                                      name="ME"
+                                      src="https://github.com/haydenbleasel.png"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="mr-2 shrink-0 self-start">
+                                    <MessageAvatar
+                                      name="AI"
+                                      src="https://github.com/openai.png"
+                                    />
+                                  </div>
+                                )}
                               </Message>
                             </Fragment>
                           );
