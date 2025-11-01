@@ -37,7 +37,7 @@ import {
 import { Response } from "@/components/ai-elements/response";
 import { Suggestion } from "@/components/ai-elements/suggestion";
 import { models, suggestions } from "@/config";
-import { Fragment, Key, useState } from "react";
+import { Fragment, Key, useMemo, useState } from "react";
 import {
   Reasoning,
   ReasoningContent,
@@ -50,6 +50,7 @@ import {
   SourcesTrigger,
 } from "@/components/ai-elements/sources";
 import { GlobeIcon, MicIcon } from "lucide-react";
+import { randomSuggestions } from "@/config/suggestions";
 
 const ChatUIPage = () => {
   const [input, setInput] = useState("");
@@ -84,6 +85,8 @@ const ChatUIPage = () => {
       },
     ],
   };
+
+  const randoms = useMemo(() => randomSuggestions(), []);
 
   return (
     <div className="flex flex-col h-screen">
@@ -122,22 +125,23 @@ const ChatUIPage = () => {
 
                                 <Response>{part.text}</Response>
 
-                                {message.role !== "user" && (
-                                  <Sources>
-                                    <SourcesTrigger
-                                      count={messageSource.sources.length}
-                                    />
-                                    <SourcesContent>
-                                      {messageSource.sources.map((source) => (
-                                        <Source
-                                          href={source.href}
-                                          key={source.href}
-                                          title={source.title}
-                                        />
-                                      ))}
-                                    </SourcesContent>
-                                  </Sources>
-                                )}
+                                {message.role !== "user" &&
+                                  status === "ready" && (
+                                    <Sources>
+                                      <SourcesTrigger
+                                        count={messageSource.sources.length}
+                                      />
+                                      <SourcesContent>
+                                        {messageSource.sources.map((source) => (
+                                          <Source
+                                            href={source.href}
+                                            key={source.href}
+                                            title={source.title}
+                                          />
+                                        ))}
+                                      </SourcesContent>
+                                    </Sources>
+                                  )}
                               </MessageContent>
 
                               {message.role === "user" ? (
@@ -166,7 +170,7 @@ const ChatUIPage = () => {
               )
             )}
             {(status === "submitted" || status === "streaming") && (
-              <Loader size={32} />
+              <Loader size={24} />
             )}
           </ConversationContent>
           <ConversationScrollButton />
@@ -178,7 +182,7 @@ const ChatUIPage = () => {
         <div className="max-w-5xl mx-auto px-2 sm:px-4 py-3">
           {/* Suggestions */}
           <div className="hidden lg:flex flex-wrap justify-center items-center gap-2 mb-3">
-            {suggestions.map((suggestion) => (
+            {randoms.map((suggestion: any) => (
               <Suggestion
                 key={suggestion}
                 onClick={() => handleSuggestionClick(suggestion)}
@@ -232,6 +236,7 @@ const ChatUIPage = () => {
                       <PromptInputModelSelectItem
                         key={model.id}
                         value={model.id}
+                        disabled={model.disabled}
                       >
                         {model.name}
                       </PromptInputModelSelectItem>
