@@ -89,7 +89,7 @@ const ChatUIPage = () => {
   const randoms = useMemo(() => randomSuggestions(), []);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-[calc(100vh-60px)]">
       {/* Scrollable Chat Area */}
       <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 bg-background max-w-7xl w-full mx-auto pt-3 h-[70vh] sm:h-[75vh] md:h-[78vh]">
         <Conversation>
@@ -182,13 +182,14 @@ const ChatUIPage = () => {
         <div className="max-w-5xl mx-auto px-2 sm:px-4 py-3">
           {/* Suggestions */}
           <div className="hidden lg:flex flex-wrap justify-center items-center gap-2 mb-3">
-            {randoms.map((suggestion: any) => (
-              <Suggestion
-                key={suggestion}
-                onClick={() => handleSuggestionClick(suggestion)}
-                suggestion={suggestion}
-              />
-            ))}
+            {messages.length === 0 &&
+              randoms.map((suggestion: any) => (
+                <Suggestion
+                  key={suggestion}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  suggestion={suggestion}
+                />
+              ))}
           </div>
 
           {/* Prompt Input Area */}
