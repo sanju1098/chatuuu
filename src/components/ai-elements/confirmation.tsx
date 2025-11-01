@@ -12,8 +12,8 @@ import {
 } from "react";
 
 type ConfirmationContextValue = {
-  approval: ToolUIPart["approval"];
-  state: ToolUIPart["state"];
+  approval: any;
+  state: any;
 };
 
 const ConfirmationContext = createContext<ConfirmationContextValue | null>(
@@ -31,8 +31,8 @@ const useConfirmation = () => {
 };
 
 export type ConfirmationProps = ComponentProps<typeof Alert> & {
-  approval?: ToolUIPart["approval"];
-  state: ToolUIPart["state"];
+  approval?: any;
+  state: any;
 };
 
 export const Confirmation = ({
