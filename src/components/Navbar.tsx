@@ -4,6 +4,7 @@ import { Menu, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Navbar() {
   return (
@@ -11,7 +12,12 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Left side - Logo / App name */}
         <Link href="/" className="flex items-center gap-2">
-          <MessageSquare className="h-6 w-6 text-primary" />
+          <Image
+            width={25}
+            height={25}
+            src="/navbar-logo.png"
+            alt="Chatuuu logo"
+          />
           <span className="font-semibold text-lg">Chatuuu</span>
         </Link>
 
