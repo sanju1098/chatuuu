@@ -36,7 +36,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Response } from "@/components/ai-elements/response";
 import { Suggestion } from "@/components/ai-elements/suggestion";
-import { models, suggestions } from "@/config";
+import { models } from "@/config";
 import { Fragment, Key, useMemo, useState } from "react";
 import {
   Reasoning,
@@ -51,17 +51,35 @@ import {
 } from "@/components/ai-elements/sources";
 import { GlobeIcon, MicIcon } from "lucide-react";
 import { randomSuggestions } from "@/config/suggestions";
+import { DefaultChatTransport } from "ai";
 
 const ChatUIPage = () => {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].id);
 
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+  });
 
   const handleSubmit = (message: PromptInputMessage) => {
-    if (!message.text) return;
-    sendMessage({ text: message.text });
     setInput("");
+    const hasText = !!message.text && message.text.trim() !== "";
+    const hasFiles = Array.isArray(message.files) && message.files.length > 0;
+
+    if (!hasText && !hasFiles) return;
+
+    const result = sendMessage({
+      text: message.text ?? "",
+      files: message.files,
+    });
+
+    if (result && typeof (result as Promise<any>).then === "function") {
+      return (result as Promise<any>).then(() => setInput(""));
+    }
+
+    return result;
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -112,7 +130,7 @@ const ChatUIPage = () => {
                               }
                             >
                               <MessageContent>
-                                {message.role !== "user" && (
+                                {/* {message.role !== "user" && (
                                   <Reasoning
                                     duration={messageReasoning.duration}
                                   >
@@ -121,11 +139,11 @@ const ChatUIPage = () => {
                                       {messageReasoning.content}
                                     </ReasoningContent>
                                   </Reasoning>
-                                )}
+                                )} */}
 
                                 <Response>{part.text}</Response>
 
-                                {message.role !== "user" &&
+                                {/* {message.role !== "user" &&
                                   status === "ready" && (
                                     <Sources>
                                       <SourcesTrigger
@@ -141,7 +159,7 @@ const ChatUIPage = () => {
                                         ))}
                                       </SourcesContent>
                                     </Sources>
-                                  )}
+                                  )} */}
                               </MessageContent>
 
                               {message.role === "user" ? (
@@ -162,6 +180,34 @@ const ChatUIPage = () => {
                             </Message>
                           </Fragment>
                         );
+
+                      // File attachments (images, PDFs)
+                      case "file":
+                        return (
+                          <div
+                            key={`${message.id}-${i}`}
+                            className="flex justify-end gap-0"
+                          >
+                            {part.mediaType?.startsWith("image/") ? (
+                              <img
+                                src={part.url}
+                                alt={part.filename ?? `attachment-${i}`}
+                                className="rounded-lg max-w-xs border my-2"
+                              />
+                            ) : part.mediaType?.startsWith(
+                                "application/pdf"
+                              ) ? (
+                              <iframe
+                                src={part.url}
+                                width="400"
+                                height="500"
+                                title={part.filename ?? `attachment-${i}`}
+                                className="border rounded-lg my-2"
+                              />
+                            ) : null}
+                          </div>
+                        );
+
                       default:
                         return null;
                     }
@@ -169,6 +215,7 @@ const ChatUIPage = () => {
                 </div>
               )
             )}
+
             {(status === "submitted" || status === "streaming") && (
               <Loader size={24} />
             )}
@@ -206,8 +253,7 @@ const ChatUIPage = () => {
               <PromptInputTextarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                // className="text-sm sm:text-base"
-                placeholder="Type your message..."
+                placeholder="Type your message or attach files..."
               />
             </PromptInputBody>
 
@@ -220,13 +266,13 @@ const ChatUIPage = () => {
                   </PromptInputActionMenuContent>
                 </PromptInputActionMenu>
 
-                <PromptInputButton variant="ghost">
+                {/* <PromptInputButton variant="ghost">
                   <MicIcon size={16} />
                 </PromptInputButton>
 
                 <PromptInputButton variant="ghost">
                   <GlobeIcon size={16} />
-                </PromptInputButton>
+                </PromptInputButton> */}
 
                 <PromptInputModelSelect onValueChange={setModel} value={model}>
                   <PromptInputModelSelectTrigger>
