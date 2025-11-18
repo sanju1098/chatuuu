@@ -37,7 +37,7 @@ import {
 import { Response } from "@/components/ai-elements/response";
 import { Suggestion } from "@/components/ai-elements/suggestion";
 import { models } from "@/config";
-import { Fragment, Key, useMemo, useState } from "react";
+import { Fragment, Key, useEffect, useMemo, useRef, useState } from "react";
 import {
   Reasoning,
   ReasoningContent,
@@ -56,6 +56,8 @@ import { DefaultChatTransport } from "ai";
 const ChatUIPage = () => {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].id);
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
@@ -105,6 +107,14 @@ const ChatUIPage = () => {
   };
 
   const randoms = useMemo(() => randomSuggestions(), []);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, status]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-60px)]">
@@ -219,6 +229,7 @@ const ChatUIPage = () => {
             {(status === "submitted" || status === "streaming") && (
               <Loader size={24} />
             )}
+            <div ref={messagesEndRef} />
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
