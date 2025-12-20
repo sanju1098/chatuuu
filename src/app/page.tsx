@@ -112,11 +112,9 @@ const ChatUIPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // useEffect(() => {
-  //   scrollToBottom();
-  // }, [messages, status]);
-
-  console.log("ChatUIPage messages:", messages);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, status]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-60px)]">
