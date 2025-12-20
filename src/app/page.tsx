@@ -49,13 +49,14 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from "@/components/ai-elements/sources";
-import { GlobeIcon, MicIcon } from "lucide-react";
-import { randomSuggestions } from "@/config/suggestions";
+import { File, GlobeIcon, MicIcon } from "lucide-react";
+import { randomSuggestions, suggestions } from "@/config/suggestions";
 import { DefaultChatTransport } from "ai";
 
 const ChatUIPage = () => {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].id);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -86,6 +87,7 @@ const ChatUIPage = () => {
 
   const handleSuggestionClick = (suggestion: string) => {
     setInput(suggestion);
+    inputRef.current?.focus();
   };
 
   const messageReasoning = {
@@ -106,15 +108,15 @@ const ChatUIPage = () => {
     ],
   };
 
-  const randoms = useMemo(() => randomSuggestions(), []);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, status]);
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [messages, status]);
+
+  console.log("ChatUIPage messages:", messages);
 
   return (
     <div className="flex flex-col h-[calc(100vh-60px)]">
@@ -202,18 +204,25 @@ const ChatUIPage = () => {
                               <img
                                 src={part.url}
                                 alt={part.filename ?? `attachment-${i}`}
-                                className="rounded-lg max-w-xs border my-2"
+                                className="rounded-lg max-w-xs border"
                               />
                             ) : part.mediaType?.startsWith(
                                 "application/pdf"
                               ) ? (
-                              <iframe
-                                src={part.url}
-                                width="400"
-                                height="500"
-                                title={part.filename ?? `attachment-${i}`}
-                                className="border rounded-lg my-2"
-                              />
+                              part.url ? (
+                                <iframe
+                                  src={part.url}
+                                  width="400"
+                                  height="200"
+                                  title={part.filename ?? `attachment-${i}`}
+                                  className="border rounded-lg"
+                                />
+                              ) : (
+                                <div className=" border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 max-w-sm">
+                                  <File className="inline-block mr-2 text-red-500" />
+                                  {part.filename ?? "PDF Attachment"}
+                                </div>
+                              )
                             ) : null}
                           </div>
                         );
@@ -241,7 +250,7 @@ const ChatUIPage = () => {
           {/* Suggestions */}
           <div className="hidden lg:flex flex-wrap justify-center items-center gap-2 mb-3">
             {messages.length === 0 &&
-              randoms.map((suggestion: any) => (
+              suggestions.map((suggestion: any) => (
                 <Suggestion
                   key={suggestion}
                   onClick={() => handleSuggestionClick(suggestion)}
@@ -262,6 +271,7 @@ const ChatUIPage = () => {
 
             <PromptInputBody>
               <PromptInputTextarea
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message or attach files..."
