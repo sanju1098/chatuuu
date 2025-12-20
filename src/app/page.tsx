@@ -287,13 +287,13 @@ const ChatUIPage = () => {
                   </PromptInputActionMenuContent>
                 </PromptInputActionMenu>
 
-                {/* <PromptInputButton variant="ghost">
+                <PromptInputButton variant="ghost" disabled>
                   <MicIcon size={16} />
                 </PromptInputButton>
 
-                <PromptInputButton variant="ghost">
+                <PromptInputButton variant="ghost" disabled>
                   <GlobeIcon size={16} />
-                </PromptInputButton> */}
+                </PromptInputButton>
 
                 <PromptInputModelSelect onValueChange={setModel} value={model}>
                   <PromptInputModelSelectTrigger>

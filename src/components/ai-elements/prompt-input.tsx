@@ -385,7 +385,7 @@ export const PromptInputActionAddAttachments = ({
     <DropdownMenuItem
       {...props}
       onSelect={(e) => {
-        e.preventDefault();
+        // e.preventDefault();
         attachments.openFileDialog();
       }}
     >
