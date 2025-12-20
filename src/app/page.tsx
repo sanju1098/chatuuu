@@ -142,16 +142,17 @@ const ChatUIPage = () => {
                               }
                             >
                               <MessageContent>
-                                {/* {message.role !== "user" && (
-                                  <Reasoning
-                                    duration={messageReasoning.duration}
-                                  >
-                                    <ReasoningTrigger />
-                                    <ReasoningContent>
-                                      {messageReasoning.content}
-                                    </ReasoningContent>
-                                  </Reasoning>
-                                )} */}
+                                {message.role !== "user" &&
+                                  status === "streaming" && (
+                                    <Reasoning
+                                    // duration={messageReasoning.duration}
+                                    >
+                                      <ReasoningTrigger />
+                                      {/* <ReasoningContent>
+                                     {messageReasoning.content}
+                                   </ReasoningContent> */}
+                                    </Reasoning>
+                                  )}
 
                                 <Response>{part.text}</Response>
 
