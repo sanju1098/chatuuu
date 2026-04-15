@@ -183,13 +183,23 @@ const ChatUIPage = () => {
                                           count={sources.length}
                                         />
                                         <SourcesContent>
-                                          {sources.map((source) => (
-                                            <Source
-                                              href={source.href}
-                                              key={source.href}
-                                              title={source.title}
-                                            />
-                                          ))}
+                                          {sources.map((source) => {
+                                            const sourceUrl =
+                                              source.href?.match(
+                                                /https:\/\/\S+/,
+                                              );
+                                            const sourceHref = sourceUrl
+                                              ? sourceUrl[0]
+                                              : "#";
+
+                                            return (
+                                              <Source
+                                                href={sourceHref}
+                                                key={source.href}
+                                                title={source.title}
+                                              />
+                                            );
+                                          })}
                                         </SourcesContent>
                                       </Sources>
                                     ) : null;
