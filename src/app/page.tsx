@@ -111,17 +111,25 @@ const ChatUIPage = () => {
     content:
       "Static reasoning: I referenced docs and prior examples to craft this response.",
   };
-  const messageSource = {
-    sources: [
-      {
-        href: "https://react.dev/reference/react",
-        title: "React Documentation",
-      },
-      {
-        href: "https://react.dev/reference/react-dom",
-        title: "React DOM Documentation",
-      },
-    ],
+
+  const extractSources = (text: string) => {
+    const sourceRegex = /\[Source:\s*([^-]+)\s*-\s*([^\]]+)\]/g;
+    const sources = [];
+    let match;
+    while ((match = sourceRegex.exec(text)) !== null) {
+      sources.push({
+        title: match[1].trim(),
+        href: match[2].trim(),
+      });
+    }
+    return sources;
+  };
+
+  const getSourcesToShow = (part: any) => {
+    if (part.type === "text") {
+      return extractSources(part.text);
+    }
+    return [];
   };
 
   return (
@@ -165,23 +173,27 @@ const ChatUIPage = () => {
 
                                 <Response>{part.text}</Response>
 
-                                {/* {message.role !== "user" &&
-                                  status === "ready" && (
-                                    <Sources>
-                                      <SourcesTrigger
-                                        count={messageSource.sources.length}
-                                      />
-                                      <SourcesContent>
-                                        {messageSource.sources.map((source) => (
-                                          <Source
-                                            href={source.href}
-                                            key={source.href}
-                                            title={source.title}
-                                          />
-                                        ))}
-                                      </SourcesContent>
-                                    </Sources>
-                                  )} */}
+                                {message.role !== "user" &&
+                                  status === "ready" &&
+                                  (() => {
+                                    const sources = getSourcesToShow(part);
+                                    return sources.length > 0 ? (
+                                      <Sources>
+                                        <SourcesTrigger
+                                          count={sources.length}
+                                        />
+                                        <SourcesContent>
+                                          {sources.map((source) => (
+                                            <Source
+                                              href={source.href}
+                                              key={source.href}
+                                              title={source.title}
+                                            />
+                                          ))}
+                                        </SourcesContent>
+                                      </Sources>
+                                    ) : null;
+                                  })()}
                               </MessageContent>
 
                               {message.role === "user" ? (
