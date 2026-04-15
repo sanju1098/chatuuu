@@ -3,23 +3,75 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <div className="flex flex-col justify-between min-h-[98%] bg-background">
-      <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="w-full  flex flex-col justify-center items-center gap-3">
-          <Skeleton className="h-150 w-250 " />
+    <div className="flex flex-col h-[calc(100vh-60px)] bg-background">
+      {/* Chat Area */}
+      <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 pt-3">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* User Message Skeleton */}
+          <div className="flex justify-end gap-2">
+            <div className="flex flex-col gap-2 max-w-xs">
+              <Skeleton className="h-12 w-48 rounded-lg" />
+              <Skeleton className="h-10 w-40 rounded-lg" />
+            </div>
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+
+          {/* AI Message Skeleton */}
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex flex-col gap-2 max-w-md flex-1">
+              <Skeleton className="h-6 w-32 rounded-lg" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-3/4 rounded-md" />
+              </div>
+            </div>
+          </div>
+
+          {/* User Message Skeleton */}
+          <div className="flex justify-end gap-2">
+            <div className="flex flex-col gap-2 max-w-xs">
+              <Skeleton className="h-10 w-56 rounded-lg" />
+            </div>
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+
+          {/* AI Message Skeleton - Loading */}
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex flex-col gap-2 max-w-md flex-1">
+              <Skeleton className="h-6 w-24 rounded-lg" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-1/2 rounded-md" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="w-full border-t bg-background/60 backdrop-blur-sm py-4 flex flex-col items-center gap-4">
-        <div className="flex flex-wrap justify-center gap-2 px-4 max-w-3xl">
-          <Skeleton className="h-8 w-64 rounded-full" />
-          <Skeleton className="h-8 w-72 rounded-full" />
-        </div>
+      {/* Input Area */}
+      <div className="border-t border-border bg-background w-full">
+        <div className="max-w-5xl mx-auto px-2 sm:px-4 py-3">
+          {/* Suggestions */}
+          <div className="hidden lg:flex flex-wrap justify-center gap-2 mb-3">
+            <Skeleton className="h-8 w-32 rounded-full" />
+            <Skeleton className="h-8 w-40 rounded-full" />
+            <Skeleton className="h-8 w-36 rounded-full" />
+          </div>
 
-        {/* Input Box */}
-        <div className="w-full max-w-3xl flex items-end justify-between gap-2 px-4">
-          <Skeleton className="h-28 flex-1 rounded-2xl" />
-          <Skeleton className="h-10 w-10 rounded-full" />
+          {/* Input Box */}
+          <div className="space-y-3">
+            <Skeleton className="h-24 w-full rounded-2xl" />
+            <div className="flex items-center justify-end gap-2">
+              <Skeleton className="h-10 w-10 rounded-lg" />
+              <Skeleton className="h-10 w-10 rounded-lg" />
+              <Skeleton className="h-10 w-32 rounded-lg" />
+              <Skeleton className="h-10 w-12 rounded-lg" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
