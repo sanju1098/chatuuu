@@ -37,7 +37,7 @@ import {
 import { Response } from "@/components/ai-elements/response";
 import { Suggestion } from "@/components/ai-elements/suggestion";
 import { models } from "@/config";
-import { Fragment, Key, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, Key, useRef, useState, useEffect } from "react";
 import {
   Reasoning,
   ReasoningContent,
@@ -52,19 +52,35 @@ import {
 import { File, GlobeIcon, MicIcon } from "lucide-react";
 import { randomSuggestions, suggestions } from "@/config/suggestions";
 import { DefaultChatTransport } from "ai";
+import { toast } from "sonner";
 
 const ChatUIPage = () => {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].id);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
-
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatRef = useRef<HTMLDivElement | null>(null);
 
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
   });
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages.length]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error("API Error", {
+        description: String(error?.message ?? error),
+      });
+    }
+  }, [error]);
+
+  const isSubmitting = status === "submitted" || status === "streaming";
 
   const handleSubmit = (message: PromptInputMessage) => {
     setInput("");
@@ -108,18 +124,13 @@ const ChatUIPage = () => {
     ],
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, status]);
-
   return (
     <div className="flex flex-col h-[calc(100vh-60px)]">
       {/* Scrollable Chat Area */}
-      <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 bg-background max-w-7xl w-full mx-auto pt-3 h-[70vh] sm:h-[75vh] md:h-[78vh]">
+      <div
+        ref={chatRef}
+        className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-6 bg-background max-w-7xl w-full mx-auto pt-3 h-[70vh] sm:h-[75vh] md:h-[78vh]"
+      >
         <Conversation>
           <ConversationContent>
             {messages.map(
@@ -206,7 +217,7 @@ const ChatUIPage = () => {
                                 className="rounded-lg max-w-xs border"
                               />
                             ) : part.mediaType?.startsWith(
-                                "application/pdf"
+                                "application/pdf",
                               ) ? (
                               part.url ? (
                                 <iframe
@@ -231,13 +242,10 @@ const ChatUIPage = () => {
                     }
                   })}
                 </div>
-              )
+              ),
             )}
 
-            {(status === "submitted" || status === "streaming") && (
-              <Loader size={24} />
-            )}
-            <div ref={messagesEndRef} />
+            {isSubmitting && !error && <Loader size={24} />}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
@@ -312,7 +320,10 @@ const ChatUIPage = () => {
                 </PromptInputModelSelect>
               </PromptInputTools>
 
-              <PromptInputSubmit disabled={!input && !status} status={status} />
+              <PromptInputSubmit
+                disabled={isSubmitting || (!input && !status)}
+                status={status}
+              />
             </PromptInputFooter>
           </PromptInput>
         </div>
