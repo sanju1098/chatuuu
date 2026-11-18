@@ -344,7 +344,7 @@ const ChatUIPage = () => {
     <div className="flex flex-col h-[calc(100vh-60px)]">
       {/* Header */}
       {!isEmpty && (
-        <div className="flex justify-end max-w-7xl w-full mx-auto px-2 sm:px-4 pt-2">
+        <div className="flex justify-end max-w-7xl w-full mx-auto p-3">
           <Button variant="outline" size="sm" onClick={handleNewChat}>
             <Plus className="size-4 mr-1" />
             New chat
